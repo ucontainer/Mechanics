@@ -6,4 +6,4 @@ class MechanicSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Mechanics
 mechanic_schema = MechanicSchema()  #used to serialize a single customer object.
-mechanics_schema = MechanicSchema(many=True)  #used to serialize many customer objects
+mechanics_schema = MechanicSchema(many=True)  #used to serialize many customer objects.

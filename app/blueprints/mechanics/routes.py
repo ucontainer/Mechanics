@@ -6,9 +6,12 @@ from app.models import Mechanics, db
 from . import mechanics_bp
 
 
+
+
 #Route creation:
     #Create customer
     #Use the route to send requests to a specific function
+
 @mechanics_bp.route('/',methods=['POST'])
 def create_mechanic():
     try:

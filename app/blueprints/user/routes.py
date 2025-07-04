@@ -2,14 +2,42 @@
 from marshmallow import ValidationError
 from flask import request, jsonify
 from sqlalchemy import select
-from .userSchemas import customer_schema, customers_schema
+from .userSchemas import customer_schema, customers_schema, login_schema
 from app.models import Customer, db
 from . import customers_bp
+from app.utils.util import encode_token
 
 
 #Route creation:
     #Create customer
     #Use the route to send requests to a specific function
+    
+@customers_bp.route('/login', methods=['POST'])
+def login():
+    try:
+        credentials = login_schema.load(request.json())
+        email = credentials['email']
+        password = credentials['password']
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+    
+    query = select(Customer).where(Customer.email == email)
+    customera = db.session.execute(query).scalars().first()
+    
+    if customera and customera.password == password:
+        token = encode_token(customera.id)
+        
+        response = {
+            'status': 'success',
+            'message':'logged in successfully',
+            'token':token
+        }
+        
+        return jsonify(response), 200
+    else:
+        return jsonify({'message':'Invalid email or password!'})
+
+
 @customers_bp.route('/',methods=['POST'])
 def create_customer():
     try:
