@@ -7,3 +7,4 @@ class MechanicSchema(ma.SQLAlchemyAutoSchema):
         model = Mechanics
 mechanic_schema = MechanicSchema()  #used to serialize a single customer object.
 mechanics_schema = MechanicSchema(many=True)  #used to serialize many customer objects.
+login_schema = MechanicSchema(exclude=['name','phone','salary']) #exludes those as it'll only look for email/pw

@@ -5,7 +5,8 @@ from sqlalchemy import select
 from .userSchemas import customer_schema, customers_schema, login_schema
 from app.models import Customer, db
 from . import customers_bp
-from app.utils.util import encode_token
+from app.utils.util import encode_token, token_required
+from app.extensions import limiter, cache
 
 
 #Route creation:
@@ -15,17 +16,17 @@ from app.utils.util import encode_token
 @customers_bp.route('/login', methods=['POST'])
 def login():
     try:
-        credentials = login_schema.load(request.json())
+        credentials = login_schema.load(request.json)
         email = credentials['email']
         password = credentials['password']
     except ValidationError as e:
         return jsonify(e.messages), 400
     
     query = select(Customer).where(Customer.email == email)
-    customera = db.session.execute(query).scalars().first()
+    customer = db.session.execute(query).scalars().first()
     
-    if customera and customera.password == password:
-        token = encode_token(customera.id)
+    if customer and customer.password == password:
+        token = encode_token(customer.id)
         
         response = {
             'status': 'success',
@@ -39,6 +40,7 @@ def login():
 
 
 @customers_bp.route('/',methods=['POST'])
+@limiter.limit("5 per day") #to limit request to 5 per day.
 def create_customer():
     try:
         customer_data = customer_schema.load(request.json)
@@ -56,6 +58,7 @@ def create_customer():
 
     #Get all customers
 @customers_bp.route('/',methods=['GET'])
+@cache.cached(timeout=20)
 def get_customers():
     query = select(Customer)
     customers_all = db.session.execute(query).scalars().all()
@@ -72,7 +75,11 @@ def get_customer(customer_id):
     return jsonify({'error':'Customer does not exist.'}),404
 
     #Update a customer (PUT)
+    #Now that we have the token required decorator, we could now remove the id in url that was once required.
+    #Only logged in users have permissions to update their acct.
+    
 @customers_bp.route('/<int:customer_id>', methods=['PUT'])
+@token_required
 def update_customer(customer_id):
     customer = db.session.get(Customer,customer_id)
     
@@ -90,7 +97,12 @@ def update_customer(customer_id):
     return customer_schema.jsonify(customer),200    
     
     #Delete a customer(DELETE)
-@customers_bp.route('/<int:customer_id>', methods=['DELETE'])
+    #Now that we have the token required decorator, we could now remove the id in url that was once required.
+    #Only logged in users have permissions to delete their acct.
+    
+@customers_bp.route('/', methods=['DELETE'])
+@token_required
+@limiter.limit("5 per day") #to limit request to 5 per day.
 def delete_customer(customer_id):
     customer=db.session.get(Customer, customer_id)
     

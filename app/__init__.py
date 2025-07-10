@@ -6,6 +6,7 @@ from .blueprints.user import customers_bp
 from .blueprints.mechanics import mechanics_bp
 from .blueprints.service_tickets import tickets_bp
 from sqlalchemy.orm import DeclarativeBase
+from .extensions import ma, limiter, cache
 
 class Base(DeclarativeBase):
     pass
@@ -17,6 +18,8 @@ def create_app(config_name):
     #Initialize extensions
     ma.init_app(app)
     db.init_app(app)
+    limiter.init_app(app)
+    cache.init_app(app)
 
     
     #Register blueprints

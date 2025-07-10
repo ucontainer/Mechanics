@@ -1,10 +1,12 @@
 from marshmallow import ValidationError
 from flask import request, jsonify
 from sqlalchemy import select
-from .ticketSchema import ticket_schema, tickets_schema
+from .ticketSchema import ticket_schema, tickets_schema, edit_ticket_schema
 from app.blueprints.mechanics.mechSchemas import mechanic_schema, mechanics_schema 
+from app.blueprints.user.userSchemas import customer_schema
 from app.models import Invoice, db
 from app.models import Mechanics, db
+from app.models import Customer, db
 from . import tickets_bp
 
 
@@ -19,6 +21,16 @@ def get_tickets():
     tickets_all = db.session.execute(query).scalars().all()
     
     return tickets_schema.jsonify(tickets_all)
+
+@tickets_bp.route('/<int:customer_id>', methods=['GET'])
+def get_customer_ticket(customer_id):
+    customer = db.session.get(Customer, customer_id)
+    query = select(Invoice).where(Invoice.customer_id == customer_id)
+    tickets = db.session.execute(query).scalars().all()
+    
+    if customer:
+        return tickets_schema.jsonify(tickets)
+    return jsonify({'message':'Invalid customer id.'}), 404
 
 
 @tickets_bp.route('/',methods=['POST'])
@@ -71,5 +83,32 @@ def remove_mechanic(ticket_id, mechanic_id):
                 }), 200
         return jsonify({'error':'Mechanic does not exist'}), 404
     return jsonify({"error":"Invalid ticket_id or mechanic_id"}), 404
+
+@tickets_bp.route("/<int:ticket_id>", methods=['PUT'])
+def edit_ticket(ticket_id):
+    #validate data
+    try:
+        ticket_edits = edit_ticket_schema.load(request.json)
+    except ValidationError as e:
+        return jsonify(e.messages), 400
     
+    query = select(Invoice).where(Invoice.id==ticket_id)
+    ticket = db.session.execute(query).scalars().first()
+    
+    for mechanic_id in ticket_edits('add_mechanic_ids'):
+        query = select(Mechanics).where(Mechanics.id == mechanic_id)
+        mechanic = db.session.execute(query).scalars().all()
+        
+        if mechanic and mechanic not in ticket.mechanics:
+            ticket.mechanics.append(mechanic) 
+    
+    for mechanic_id in ticket_edits('remove_mechanic_ids'):
+        query = select(Mechanics).where(Mechanics.id == mechanic_id)
+        mechanic = db.session.execute(query).scalars().all()
+        
+        if mechanic and mechanic in ticket.mechanics:
+            ticket.mechanics.remove(mechanic)    
+            
+    db.session.commit()
+    return ticket_schema.jsonify(ticket)
     
