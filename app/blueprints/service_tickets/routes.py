@@ -17,10 +17,16 @@ from . import tickets_bp
     
 @tickets_bp.route('/', methods=['GET'])
 def get_tickets():
-    query = select(Invoice)
-    tickets_all = db.session.execute(query).scalars().all()
-    
-    return tickets_schema.jsonify(tickets_all)
+    try:
+        page = int(request.args.get('page'))
+        per_page = int(request.args.get('per_page'))
+        query = select(Invoice)
+        tickets_all = db.paginate(query,page=page,per_page=per_page)
+        return tickets_schema.jsonify(tickets_all), 200
+    except:
+        query = select(Invoice)
+        tickets_all = db.session.execute(query).scalars().all()
+        return tickets_schema.jsonify(tickets_all), 200
 
 @tickets_bp.route('/<int:customer_id>', methods=['GET'])
 def get_customer_ticket(customer_id):
@@ -58,16 +64,17 @@ def assign_mechanic(ticket_id, mechanic_id):
         if mechanic not in ticket.mechanics:
             ticket.mechanics.append(mechanic)
             db.session.commit()
+            # breakpoint()
             return jsonify({
                 "message":"successfully added mechanic to ticket",
                 "ticket": ticket_schema.dump(ticket),
-                "mechanic": mechanic_schema.dump(ticket.mechanics)
+                "mechanic": mechanic_schema.dump(ticket.mechanics[0])
             }), 200
        
         return jsonify({'error':'Mechanic does not exist'}), 404
     return jsonify({"error":"Invalid ticket_id or mechanic_id"}), 404
 
-@tickets_bp.route('/<int:ticket_id>/remove-mechanic/<int:mechanic_id>', methods=['PUT'])
+@tickets_bp.route('/<int:ticket_id>/remove-mechanic/<int:mechanic_id>', methods=['DELETE'])
 def remove_mechanic(ticket_id, mechanic_id):
     ticket = db.session.get(Invoice, ticket_id)
     mechanic = db.session.get(Mechanics, mechanic_id)
@@ -76,10 +83,11 @@ def remove_mechanic(ticket_id, mechanic_id):
         if mechanic in ticket.mechanics:
             ticket.mechanics.remove(mechanic)
             db.session.commit()
+            # breakpoint()
             return jsonify({
                 "message":"successfully removed mechanic from ticket",
-                "ticket": ticket_schema.jsonify(ticket),
-                "mechanics": mechanics_schema.jsonify(ticket.mechanics)
+                "ticket": ticket_schema.dump(ticket),
+                "mechanics": mechanics_schema.dump(ticket.mechanics)
                 }), 200
         return jsonify({'error':'Mechanic does not exist'}), 404
     return jsonify({"error":"Invalid ticket_id or mechanic_id"}), 404
@@ -89,6 +97,7 @@ def edit_ticket(ticket_id):
     #validate data
     try:
         ticket_edits = edit_ticket_schema.load(request.json)
+        print("***Ticket:***"+ticket_edits)
     except ValidationError as e:
         return jsonify(e.messages), 400
     
@@ -110,5 +119,5 @@ def edit_ticket(ticket_id):
             ticket.mechanics.remove(mechanic)    
             
     db.session.commit()
-    return ticket_schema.jsonify(ticket)
+    return ticket_schema.jsonify('Success!\n'+ticket)
     

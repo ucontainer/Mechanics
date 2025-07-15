@@ -57,12 +57,21 @@ def create_mechanic():
 
     #Get all customers
 @mechanics_bp.route('/',methods=['GET'])
-@cache.cached(timeout=20) #Used to save info in cache for faster retrieval.
+# @cache.cached(timeout=20) #Used to save info in cache for faster retrieval.
 def get_mechanics():
-    query = select(Mechanics)
-    mechanics_all = db.session.execute(query).scalars().all()
+    try:
+        page = int(request.args.get('page'))
+        per_page = int(request.args.get('per_page'))
+        query = select(Mechanics)
+        mechanics_all = db.paginate(query,page=page,per_page=per_page)
+        return mechanics_schema.jsonify(mechanics_all)
+        
+    except:    
     
-    return mechanics_schema.jsonify(mechanics_all)
+        query = select(Mechanics)
+        mechanics_all = db.session.execute(query).scalars().all()
+        
+        return mechanics_schema.jsonify(mechanics_all), 200
 
     #Get specific customer
 @mechanics_bp.route('/<int:mechanic_id>',methods=['GET'])
@@ -95,7 +104,7 @@ def update_mechanic(mechanic_id):
     #Delete a mechanic(DELETE)
 @mechanics_bp.route('/', methods=['DELETE'])
 @token_required
-@limiter.limit("5 per day")
+@limiter.limit("10 per day")
 def delete_mechanic(mechanic_id):
     mechanic=db.session.get(Mechanics, mechanic_id)
     
@@ -105,3 +114,26 @@ def delete_mechanic(mechanic_id):
     db.session.delete(mechanic)
     db.session.commit()
     return jsonify({'message':f'Mechanic id: {mechanic_id}, successfully deleted'}), 200
+
+
+@mechanics_bp.route("/jobs",methods=['GET'])
+def mech_jobs():
+    query = select(Mechanics)
+    mechanics = db.session.execute(query).scalars().all()
+    
+    mechanics.sort(key= lambda mechanic: len(mechanic.service_tickets),reverse=True)
+    
+    # for mechanic in mechanics:
+    #     print(mechanic.name,len(mechanic.service_tickets))
+    # print(mechanics)
+    
+    return mechanics_schema.jsonify(mechanics)
+
+@mechanics_bp.route("/search",methods=['GET'])
+def search_mech():
+    mech_name = request.args.get("name")
+    
+    query  = select(Mechanics).where(Mechanics.name.like(f'%{mech_name}%')) #add the f function to optimize search
+    mechanics = db.session.execute(query).scalars().all()
+    
+    return mechanics_schema.jsonify(mechanics)

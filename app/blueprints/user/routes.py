@@ -58,12 +58,19 @@ def create_customer():
 
     #Get all customers
 @customers_bp.route('/',methods=['GET'])
-@cache.cached(timeout=20)
+# @cache.cached(timeout=20)
 def get_customers():
-    query = select(Customer)
-    customers_all = db.session.execute(query).scalars().all()
-    
-    return customers_schema.jsonify(customers_all)
+    try:
+        page = int(request.args.get('page'))
+        per_page = int(request.args.get('per_page'))
+        query = select(Customer)
+        customers_all = db.paginate(query,page=page,per_page=per_page)
+        return customers_schema.jsonify(customers_all), 200
+    except:
+        query = select(Customer)
+        customers_all = db.session.execute(query).scalars().all()
+        
+        return customers_schema.jsonify(customers_all), 200
 
     #Get specific customer
 @customers_bp.route('/<int:customer_id>',methods=['GET'])
@@ -112,3 +119,11 @@ def delete_customer(customer_id):
     db.session.delete(customer)
     db.session.commit()
     return jsonify({'message':f'Customer id: {customer_id}, successfully deleted'}), 200
+
+@customers_bp.route("/search", methods=['GET'])
+def search_customer():
+    customer_name = request.args.get("name")
+    query = select(Customer).where(Customer.name.like(f'%{customer_name}%'))
+    customers = db.session.execute(query).scalars().all()
+    
+    return customers_schema.jsonify(customers)
