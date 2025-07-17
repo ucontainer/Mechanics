@@ -2,11 +2,13 @@ from marshmallow import ValidationError
 from flask import request, jsonify
 from sqlalchemy import select
 from .ticketSchema import ticket_schema, tickets_schema, edit_ticket_schema
-from app.blueprints.mechanics.mechSchemas import mechanic_schema, mechanics_schema 
+from app.blueprints.mechanics.mechSchemas import mechanic_schema, mechanics_schema
+from app.blueprints.inventory.inventorySchemas import inventories_schema, inventory_schema
 from app.blueprints.user.userSchemas import customer_schema
 from app.models import Invoice, db
 from app.models import Mechanics, db
 from app.models import Customer, db
+from app.models import Inventory, db
 from . import tickets_bp
 
 
@@ -92,32 +94,50 @@ def remove_mechanic(ticket_id, mechanic_id):
         return jsonify({'error':'Mechanic does not exist'}), 404
     return jsonify({"error":"Invalid ticket_id or mechanic_id"}), 404
 
-@tickets_bp.route("/<int:ticket_id>", methods=['PUT'])
-def edit_ticket(ticket_id):
-    #validate data
-    try:
-        ticket_edits = edit_ticket_schema.load(request.json)
-        print("***Ticket:***"+ticket_edits)
-    except ValidationError as e:
-        return jsonify(e.messages), 400
+# @tickets_bp.route("/<int:ticket_id>", methods=['PUT'])
+# def edit_ticket(ticket_id):
+#     #validate data
+#     try:
+#         ticket_edits = edit_ticket_schema.load(request.json)
+#         print("***Ticket:***"+ticket_edits)
+#     except ValidationError as e:
+#         return jsonify(e.messages), 400
     
-    query = select(Invoice).where(Invoice.id==ticket_id)
-    ticket = db.session.execute(query).scalars().first()
+#     query = select(Invoice).where(Invoice.id==ticket_id)
+#     ticket = db.session.execute(query).scalars().first()
     
-    for mechanic_id in ticket_edits('add_mechanic_ids'):
-        query = select(Mechanics).where(Mechanics.id == mechanic_id)
-        mechanic = db.session.execute(query).scalars().all()
+#     for mechanic_id in ticket_edits('add_mechanic_ids'):
+#         query = select(Mechanics).where(Mechanics.id == mechanic_id)
+#         mechanic = db.session.execute(query).scalars().all()
         
-        if mechanic and mechanic not in ticket.mechanics:
-            ticket.mechanics.append(mechanic) 
+#         if mechanic and mechanic not in ticket.mechanics:
+#             ticket.mechanics.append(mechanic) 
     
-    for mechanic_id in ticket_edits('remove_mechanic_ids'):
-        query = select(Mechanics).where(Mechanics.id == mechanic_id)
-        mechanic = db.session.execute(query).scalars().all()
+#     for mechanic_id in ticket_edits('remove_mechanic_ids'):
+#         query = select(Mechanics).where(Mechanics.id == mechanic_id)
+#         mechanic = db.session.execute(query).scalars().all()
         
-        if mechanic and mechanic in ticket.mechanics:
-            ticket.mechanics.remove(mechanic)    
+#         if mechanic and mechanic in ticket.mechanics:
+#             ticket.mechanics.remove(mechanic)    
             
-    db.session.commit()
-    return ticket_schema.jsonify('Success!\n'+ticket)
+#     db.session.commit()
+#     return ticket_schema.jsonify('Success!\n'+ticket)
     
+@tickets_bp.route('/<int:ticket_id>/add_inventory/<int:inventory_id>',methods=(['PUT']))
+def assign_inventory(ticket_id, inventory_id):
+    ticket = db.session.get(Invoice, ticket_id)
+    inventory_item = db.session.get(Inventory, inventory_id)
+    
+    if ticket and inventory_item:
+        if inventory_item not in ticket.inventory:
+            ticket.inventory.append(inventory_item)
+            db.session.commit()
+            # breakpoint()
+            return jsonify({
+                "message":"successfully added inventory to ticket",
+                "ticket": ticket_schema.dump(ticket),
+                "inventory": inventory_schema.dump(ticket.inventory[0])
+            }), 200
+       
+        return jsonify({'error':'inventory does not exist'}), 404
+    return jsonify({"error":"Invalid ticket_id or inventory_id"}), 404

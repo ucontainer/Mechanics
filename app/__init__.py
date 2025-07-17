@@ -7,6 +7,7 @@ from .blueprints.mechanics import mechanics_bp
 from .blueprints.service_tickets import tickets_bp
 from sqlalchemy.orm import DeclarativeBase
 from .extensions import ma, limiter, cache
+from .blueprints.inventory import inventory_bp
 
 class Base(DeclarativeBase):
     pass
@@ -26,5 +27,6 @@ def create_app(config_name):
     app.register_blueprint(customers_bp, url_prefix='/customers')
     app.register_blueprint(mechanics_bp, url_prefix='/mechanics')
     app.register_blueprint(tickets_bp, url_prefix='/tickets')
+    app.register_blueprint(inventory_bp,url_prefix='/inventory')
     
     return app
