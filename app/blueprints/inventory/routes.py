@@ -61,7 +61,7 @@ def get_inventory(inventory_id):
     #Now that we have the token required decorator, we could now remove the id in url that was once required.
     #Only logged in users have permissions to update their acct.
     
-@inventory_bp.route('/<int:inventory_id>', methods=['PUT'])
+@inventory_bp.route('/', methods=['PUT'])
 def update_inventory(inventory_id):
     inventory = db.session.get(Inventory,inventory_id)
     

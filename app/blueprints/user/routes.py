@@ -85,10 +85,10 @@ def get_customer(customer_id):
     #Now that we have the token required decorator, we could now remove the id in url that was once required.
     #Only logged in users have permissions to update their acct.
     
-@customers_bp.route('/<int:customer_id>', methods=['PUT'])
+@customers_bp.route('/', methods=['PUT'])
 @token_required
 def update_customer(customer_id):
-    customer = db.session.get(Customer,customer_id)
+    customer = db.session.get(Customer, customer_id)
     
     if not customer:
         return jsonify({'error','Customer does not exist'}), 404

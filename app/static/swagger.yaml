@@ -1,0 +1,601 @@
+#app/static/swagger.yaml
+
+swagger: '2.0'
+info:
+  title: "Mechanicx API"
+  description: "An API for the Mechanicx app"
+  version: "1.0.0"
+host: "127.0.0.1:5000"
+schemes:
+  - "http"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+securityDefinitions:
+  bearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+
+paths:
+  /customers/login:
+    post:
+      tags:
+        - Customers
+      summary: "Login endpoint, (generates token)"
+      description: "Validates customer credentials, generates and returns a customer specific token."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Login credentials"
+          required: true
+          schema:
+            $ref: "#/definitions/LoginCredentials"
+      responses:
+        200:
+          description: "Login successful"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+          examples:
+            application/json:
+              token: "wNzE2MjE0OTA5X2I2MT..."
+              message: "Login successful"
+              status: "success"
+
+  /customers: #customer endpoint
+    post: #POST request
+      tags:
+        - Customers
+      summary: "Endpoint to create/register a new user."
+      description: "Endpoint to create a new customer in our Mechanicx system, emails are unique."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Information required to create a new Customer."
+          required: true
+          schema:
+            $ref: "#/definitions/CreateCustomerPayload"
+      responses:
+        201:
+          descriptions: "Successful Customer Creation"
+          schema:
+            $ref: "#/definitions/CreateCustomerResponse"
+          examples:
+            application/json:
+              id: 1
+              name: Awele Wana
+              email: welewan@jude.com
+              password: pw12345
+    
+    get:
+      tags:
+        - Customers
+      summary: "Returns all customers"
+      description: "Endpoint to retrieve a list of all customers."
+      responses:
+        200:
+          description: "Successfully retrieved customers"
+          schema: 
+            $ref: "#/definitions/AllCustomers"
+    
+    put:
+      tags:
+        - Customers
+      summary: "Endpoint to update a customer"
+      description: "Endpoint to update a customer. This is a token authenticated route, and the user must be logged in to update acct."
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Information required to update a customer"
+          required: true
+          schema:
+            $ref: "#/definitions/UpdateCustomerPayload"
+      responses:
+        200:
+          descriptions: "Successfully updated customer"
+          schema:
+            $ref: "#/definitions/UpdateCustomerResponse"
+          examples:
+            application/json:
+              id: 1
+              name: Uma Nah
+              email: na@umah.com
+              password: 1234
+    
+    delete: 
+      tags:
+        - Customers
+      summary: "Endpoint to delete a customer"
+      description: "Endpoint to delete a customer. Requires token authentication, customer must be logged in to delete account."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Successfully deleted customer"
+          schema:
+            $ref: "#/definitions/DeleteCustomerResponse"
+          examples:
+            application/json:
+              message: "Successfully deleted customer <id>."
+
+  /mechanics/login:
+    post:
+      tags:
+        - Mechanics
+      summary: "Login endpoint, (generates token)"
+      description: "Validates customer credentials, generates and returns a customer specific token."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Login credentials"
+          required: true
+          schema:
+            $ref: "#/definitions/MechanicsLogin"
+      responses:
+        200:
+          description: "Login successful"
+          schema:
+            $ref: "#/definitions/MechanicsLoginResponse"
+          examples:
+            application/json:
+              token: "wNzE2MjE0OTA5X2I2MT..."
+              message: "Login successful"
+              status: "success"  
+  /mechanics: 
+    get:
+      tags:
+        - Mechanics
+      summary: "Returns all mechanics"
+      description: "Endpoint to retrieve a list of all mechanics."
+      responses:
+        200:
+          description: "Successfully retrieved mechanics"
+          schema: 
+            $ref: "#/definitions/AllMechanics"
+
+    post: #POST request
+      tags:
+        - Mechanics
+      summary: "Endpoint to create/register a new user."
+      description: "Endpoint to create a new mechanic in our Mechanicx system, emails are unique."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Information required to create a new Mechanic."
+          required: true
+          schema:
+            $ref: "#/definitions/CreateMechanicsPayload"
+      responses:
+        201:
+          descriptions: "Successful mechanic Creation"
+          schema:
+            $ref: "#/definitions/CreatemechanicsResponse"
+          examples:
+            application/json:
+              id: 1
+              name: Awele Wana
+              email: welewan@jude.com
+              password: pw12345
+
+    put:
+      tags:
+        - Mechanics
+      summary: "Endpoint to update a mechanic"
+      description: "Endpoint to update a mechanic. This is a token authenticated route, and the user must be logged in to update acct."
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Information required to update a mechanic"
+          required: true
+          schema:
+            $ref: "#/definitions/UpdateMechanicsPayload"
+      responses:
+        200:
+          descriptions: "Successfully updated Mechanics"
+          schema:
+            $ref: "#/definitions/UpdateMechanicsResponse"
+          examples:
+            application/json:
+              id: 1
+              name: Uma Nah
+              email: na@umah.com
+              phone: 3334445555
+              salary: 33
+              password: 1234
+
+    delete: 
+      tags:
+        - Mechanics
+      summary: "Endpoint to delete a mechanic"
+      description: "Endpoint to delete a mechanic. Requires token authentication, mechanic must be logged in to delete account."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Successfully deleted mechanic"
+          schema:
+            $ref: "#/definitions/DeleteMechanicsResponse"
+          examples:
+            application/json:
+              message: "Successfully deleted mechanic <id>."
+
+  /tickets:
+    get:
+      tags:
+        - Invoices
+      summary: "Returns all Tickets"
+      description: "Endpoint to retrieve a list of all tickets."
+      responses:
+        200:
+          description: "Successfully retrieved tickets"
+          schema: 
+            $ref: "#/definitions/AllInvoices"
+
+  /inventory:
+    get:
+      tags:
+        - Inventory
+      summary: "Returns all inventory items"
+      description: "Endpoint to retrieve a list of all items in inventory."
+      responses:
+        200:
+          description: "Successfully retrieved Inventory"
+          schema: 
+            $ref: "#/definitions/AllInventory"
+
+    post: #POST request
+      tags:
+        - Inventory
+      summary: "Endpoint to create/register an Inventory item."
+      description: "Endpoint to create a new inventory in our Mechanicx system, emails are unique."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Information required to create a new Inventory."
+          required: true
+          schema:
+            $ref: "#/definitions/CreateInventoryPayload"
+      responses:
+        201:
+          descriptions: "Successful Inventory Creation"
+          schema:
+            $ref: "#/definitions/CreateInventoryResponse"
+          examples:
+            application/json:
+              id: 1
+              inventory_name: air filter
+              price: $29.99
+
+    put:
+      tags:
+        - Inventory
+      summary: "Endpoint to update an inventory"
+      description: "Endpoint to update an inventory."
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Information required to update Inventory"
+          required: true
+          schema:
+            $ref: "#/definitions/UpdateInventoryPayload"
+      responses:
+        200:
+          descriptions: "Successfully updated Inventory"
+          schema:
+            $ref: "#/definitions/UpdateInventoryResponse"
+          examples:
+            application/json:
+              id: 1
+              inventory_name: Seat cover
+              price: 21.12 
+    
+  
+
+definitions: 
+  LoginCredentials:
+    type: 'object'
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
+    required:
+      - email
+      - password
+
+  LoginResponse:
+    type: "object"
+    properties:
+      token:
+        type: "string"
+      message:
+        type: "string"
+      status:
+        type: "string"
+
+  MechanicsLogin:
+    type: 'object'
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
+    required:
+      - email
+      - password
+
+  MechanicsLoginResponse:
+    type: "object"
+    properties:
+      token:
+        type: "string"
+      message:
+        type: "string"
+      status:
+        type: "string"
+
+  CreateCustomerPayload:
+    type: "object"
+    properties:
+      name: 
+        type: "string"
+      email:
+        type: "string"
+      address: 
+        type: "string"
+      password: 
+        type: "string"
+    
+    required:
+      - name
+      - email
+      - address 
+      - password
+
+  CreateCustomerResponse:
+    type: "object"
+    properties:
+      id:
+        type: "int" 
+      name:
+        type: "string"
+      email:
+        type: "string"
+      address:
+        type: "string"
+      password:
+        type: "string"
+  
+  CreateMechanicsPayload:
+    type: "object"
+    properties:
+      name: 
+        type: "string"
+      email:
+        type: "string"
+      phone:
+        type: "string"
+      salary: 
+        type: "string"
+      password: 
+        type: "string"
+
+    required:
+      - name
+      - email
+      - phone 
+      - salary
+      - password
+  
+  CreateMechanicsResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer" 
+      name:
+        type: "string"
+      email:
+        type: "string"
+      phone:
+        type: "string"
+      salary:
+        type: "string"
+      password:
+        type: "string" 
+
+  CreateInventoryPayload:
+    type: "object"
+    properties:
+      inventory_name: 
+        type: "string"
+      price:
+        type: "number"
+        format: "float"
+    
+    required:
+      - inventory_name
+      - price
+
+  CreateInventoryResponse:
+    type: "object"
+    properties:
+      id:
+        type: "int" 
+      inventory_name:
+        type: "string"
+      price:
+        type: "number"
+        format: "float"
+
+  AllCustomers:
+    type: "array"
+    items: 
+      type: "object"
+      properties: 
+        id:
+          type: "integer"
+        name:
+          type: "string"
+        email:
+          type: "string"
+        password: 
+          type: "string"
+
+  AllMechanics:
+    type: "array"
+    items: 
+      type: "object"
+      properties: 
+        id:
+          type: "integer"
+        name:
+          type: "string"
+        email:
+          type: "string"
+        phone: 
+          type: "string"
+        salary:
+          type: "string"
+        password:
+          type: "string"
+
+  AllInvoices:
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        id: 
+          type: "integer"
+        customer_id: 
+          type: "integer"
+        ticket_date: 
+          type: "string"
+          format: date
+
+  AllInventory:
+    type: "array"
+    items:  
+      type: "object"
+      properties:
+        id: 
+          type: "integer"
+        inventory_name:
+          type: "string"
+        price:
+          type: "float"
+
+  UpdateCustomerPayload:
+    type: "object"
+    properties:
+      name: 
+        type: "string"
+      email:  
+        type: "string"
+      address:  
+        type: "string"
+      password:
+        type: "string"
+    
+    required: 
+      - name
+      - email
+      - address
+      - password
+
+  UpdateCustomerResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      email:
+        type: "string"
+      address:
+        type: "string"
+      password:
+        type: "string"
+
+  UpdateInventoryPayload:
+    type: "object"
+    properties:
+      inventory_name: 
+        type: "string"
+      price:  
+        type: "number"
+        format: "float"
+    
+    required: 
+      - inventory_name
+      - price
+
+  UpdateInventoryResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      inventory_name:
+        type: "string"
+      price:
+        type: "number"
+        format: "float"
+
+  UpdateMechanicsPayload:
+    type: "object"
+    properties:
+      name: 
+        type: "string"
+      email:  
+        type: "string"
+      phone:  
+        type: "string"
+      salary:
+        type: "string"
+      password:
+        type: "string"
+    
+    required: 
+      - name
+      - email
+      - phone
+      - salary
+      - password
+
+  UpdateMechanicsResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      email:
+        type: "string"
+      phone:
+        type: "string"
+      salary:
+        type: "string"
+      password:
+        type: "string"
+
+    
+  DeleteCustomerResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+
+  DeleteMechanicsResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+
+  

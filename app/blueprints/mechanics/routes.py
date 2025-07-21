@@ -83,7 +83,7 @@ def get_mechanic(mechanic_id):
     return jsonify({'error':'Mechanic does not exist.'}),404
 
     #Update a customer (PUT)
-@mechanics_bp.route('/<int:mechanic_id>', methods=['PUT'])
+@mechanics_bp.route('/', methods=['PUT'])
 @token_required
 def update_mechanic(mechanic_id):
     mechanic = db.session.get(Mechanics,mechanic_id)
