@@ -236,6 +236,45 @@ paths:
           description: "Successfully retrieved tickets"
           schema: 
             $ref: "#/definitions/AllInvoices"
+  /tickets/{ticketId}/add_inventory/{inventoryId}:
+    put:
+      tags:
+        - Invoices
+      summary: "Endpoint to update an inventory"
+      description: "Endpoint to update an inventory."
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "ticketId"
+          description: "Id of ticket"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+        - in: "path"
+          name: "inventoryId"
+          description: "Id of inventory"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+        - in: "body"
+          name: "body"
+          description: "Information required to assign an inventory to a ticket."
+          required: true
+          schema:
+            $ref: "#/definitions/AssignTicketPayload"
+      responses:
+        200:
+          descriptions: "Successfully updated Inventory"
+          schema:
+            $ref: "#/definitions/UpdateInventoryResponse"
+          examples:
+            application/json:
+              id: 1
+              inventory_name: Seat cover
+              price: 21.12 
 
   /inventory:
     get:
@@ -270,8 +309,8 @@ paths:
             application/json:
               id: 1
               inventory_name: air filter
-              price: $29.99
-
+              price: $29.99       
+  /inventory/{inventoryId}:
     put:
       tags:
         - Inventory
@@ -280,6 +319,13 @@ paths:
       security: 
         - bearerAuth: []
       parameters:
+        - in: "path"
+          name: "inventoryId"
+          description: "Id of inventory"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
         - in: "body"
           name: "body"
           description: "Information required to update Inventory"
@@ -296,6 +342,30 @@ paths:
               id: 1
               inventory_name: Seat cover
               price: 21.12 
+
+    delete: 
+      tags:
+        - Inventory
+      summary: "Endpoint to delete an inventory"
+      description: "Endpoint to delete an inventory."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "inventoryId"
+          description: "Id of inventory"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        200:
+          description: "Successfully deleted inventory"
+          schema:
+            $ref: "#/definitions/DeleteInventorysResponse"
+          examples:
+            application/json:
+              message: "Successfully deleted inventory <id>."
     
   
 
@@ -584,8 +654,29 @@ definitions:
         type: "string"
       password:
         type: "string"
+  
+  AssignTicketPayload:
+    type: "object"
+    properties:
+      ticketId: 
+        type: "integer"
+      inventoryId:
+        type: "integer"
+    required:
+      - ticketId
+      - inventoryId
+  AssignTicketResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      message:
+        type: "string"
+      ticket: 
+        type: "string"
+      inventory: 
+        type: "string"
 
-    
   DeleteCustomerResponse:
     type: "object"
     properties:
@@ -593,6 +684,12 @@ definitions:
         type: "string"
 
   DeleteMechanicsResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+
+  DeleteInventoryResponse:
     type: "object"
     properties:
       message:

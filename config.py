@@ -3,7 +3,9 @@ class DevelopmentConfig:
     DEBUG = True   #Causes flask to auto-update whenever there are changes.
     
 class TestingConfig:
-    pass
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///testing.db'
+    DEBUG = True
+    CACHE_TYPE = 'SimpleCache'
 
 class ProductionConfig:
     pass
