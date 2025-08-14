@@ -2,11 +2,12 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 from flask import request, jsonify
+import os
 
 #Tokens need expiration date. 
 #Secret keys are used to sign and encode tokens specific to the applicaiton. 
 
-SECRET_KEY = "super_secret_key"
+SECRET_KEY = os.environ.get('SECRET_KEY') or 'super secret key'
 
 def encode_token(user_id):
     payload = {
