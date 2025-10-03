@@ -5,7 +5,7 @@ import unittest
 from tests.test_customer import TestCustomer
 
 class TestInventory(unittest.TestCase):
-    def setup(self):
+    def setUp(self):
         self.app = create_app("TestingConfig")
         self.inventory = Inventory(inventory_name="test_inventory",price=29.99)
         with self.app.app_context():

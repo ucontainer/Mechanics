@@ -36,7 +36,7 @@ def login():
         
         return jsonify(response), 200
     else:
-        return jsonify({'message':'Invalid email or password!'})
+        return jsonify({'message':'Invalid email or password!'}), 400
 
 
 @customers_bp.route('/',methods=['POST'])
@@ -50,7 +50,7 @@ def create_customer():
     query = select(Customer).where(Customer.email == customer_data['email'])
     existing_customer = db.session.execute(query).scalars().all()
     if existing_customer:
-        return jsonify({"error": "Email already exists"}), 404
+        return jsonify({"error": "Email already exists"}), 400
     new_customer = Customer(**customer_data)   #** unpacks the dictionary
     db.session.add(new_customer)
     db.session.commit()

@@ -10,3 +10,11 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = "postgresql://ucontainer:PNtMEZvVnCDTBuKdlF6hZHxfywTkpTVy@dpg-d2ehlvqdbo4c738f3fgg-a.oregon-postgres.render.com/mechanic_postgre"
+    
+class TestingConfig(Config):
+    TESTING = True
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    RATELIMIT_ENABLED = False
+    CACHE_TYPE = "SimpleCache"
+    

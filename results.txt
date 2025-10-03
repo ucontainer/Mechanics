@@ -1,0 +1,101 @@
+EEEE
+======================================================================
+ERROR: test_customer (unittest.loader._FailedTest.test_customer)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_customer
+Traceback (most recent call last):
+  File "C:\Users\PMIC Technologies\AppData\Local\Programs\Python\Python311\Lib\unittest\loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PMIC Technologies\AppData\Local\Programs\Python\Python311\Lib\unittest\loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\tests\test_customer.py", line 1, in <module>
+    from app import create_app
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\__init__.py", line 5, in <module>
+    from .blueprints.user import customers_bp
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\blueprints\user\__init__.py", line 6, in <module>
+    from . import routes
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\blueprints\user\routes.py", line 5, in <module>
+    from .userSchemas import customer_schema, customers_schema, login_schema
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\blueprints\user\userSchemas.py", line 13, in <module>
+    login_schema = CustomerLoginSchema() #exludes those as it'll only look for email/pw
+                   ^^^^^^^^^^^^^^^^^^^
+NameError: name 'CustomerLoginSchema' is not defined
+
+
+======================================================================
+ERROR: test_inventory (unittest.loader._FailedTest.test_inventory)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_inventory
+Traceback (most recent call last):
+  File "C:\Users\PMIC Technologies\AppData\Local\Programs\Python\Python311\Lib\unittest\loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PMIC Technologies\AppData\Local\Programs\Python\Python311\Lib\unittest\loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\tests\test_inventory.py", line 1, in <module>
+    from app import create_app
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\__init__.py", line 5, in <module>
+    from .blueprints.user import customers_bp
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\blueprints\user\__init__.py", line 6, in <module>
+    from . import routes
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\blueprints\user\routes.py", line 5, in <module>
+    from .userSchemas import customer_schema, customers_schema, login_schema
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\blueprints\user\userSchemas.py", line 13, in <module>
+    login_schema = CustomerLoginSchema() #exludes those as it'll only look for email/pw
+                   ^^^^^^^^^^^^^^^^^^^
+NameError: name 'CustomerLoginSchema' is not defined
+
+
+======================================================================
+ERROR: test_mech (unittest.loader._FailedTest.test_mech)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_mech
+Traceback (most recent call last):
+  File "C:\Users\PMIC Technologies\AppData\Local\Programs\Python\Python311\Lib\unittest\loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PMIC Technologies\AppData\Local\Programs\Python\Python311\Lib\unittest\loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\tests\test_mech.py", line 1, in <module>
+    from app import create_app
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\__init__.py", line 5, in <module>
+    from .blueprints.user import customers_bp
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\blueprints\user\__init__.py", line 6, in <module>
+    from . import routes
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\blueprints\user\routes.py", line 5, in <module>
+    from .userSchemas import customer_schema, customers_schema, login_schema
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\blueprints\user\userSchemas.py", line 13, in <module>
+    login_schema = CustomerLoginSchema() #exludes those as it'll only look for email/pw
+                   ^^^^^^^^^^^^^^^^^^^
+NameError: name 'CustomerLoginSchema' is not defined
+
+
+======================================================================
+ERROR: test_ticket (unittest.loader._FailedTest.test_ticket)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_ticket
+Traceback (most recent call last):
+  File "C:\Users\PMIC Technologies\AppData\Local\Programs\Python\Python311\Lib\unittest\loader.py", line 419, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PMIC Technologies\AppData\Local\Programs\Python\Python311\Lib\unittest\loader.py", line 362, in _get_module_from_name
+    __import__(name)
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\tests\test_ticket.py", line 1, in <module>
+    from app import create_app
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\__init__.py", line 5, in <module>
+    from .blueprints.user import customers_bp
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\blueprints\user\__init__.py", line 6, in <module>
+    from . import routes
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\blueprints\user\routes.py", line 5, in <module>
+    from .userSchemas import customer_schema, customers_schema, login_schema
+  File "C:\Users\PMIC Technologies\Documents\UdemyGit\Mechanic_proj\app\blueprints\user\userSchemas.py", line 13, in <module>
+    login_schema = CustomerLoginSchema() #exludes those as it'll only look for email/pw
+                   ^^^^^^^^^^^^^^^^^^^
+NameError: name 'CustomerLoginSchema' is not defined
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+FAILED (errors=4)
